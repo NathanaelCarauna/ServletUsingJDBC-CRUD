@@ -92,4 +92,38 @@ public class EventoServlet extends HttpServlet {
 			resp.getWriter().write(e.getMessage());
 		}
 	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			Class.forName("org.postgresql.Driver");
+			String url = "jdbc:postgresql://localhost/servletjdbc?user=postgres&password=123456&ssl=false";
+			Connection conn = DriverManager.getConnection(url);			
+			Statement createEvent = conn.createStatement();
+			
+			String id = req.getParameter("id");
+			String descricao = req.getParameter("descricao");
+			String emocoes = req.getParameter("emocoes");
+			String sql = "";
+			if(descricao == null) {
+				sql = String.format("UPDATE evento SET emocoes = '%s' WHERE eventoid = %s", emocoes, id );				
+			}
+			if(emocoes == null) {
+				sql = String.format("UPDATE evento SET descricao = '%s' WHERE eventoid = %s", descricao, id);								
+			}
+			if(descricao != null && emocoes != null) {
+				sql = String.format("UPDATE evento SET descricao = '%s', emocoes = '%s' WHERE eventoid = %s" , descricao, emocoes, id);								
+			}
+			System.out.println(sql);
+
+			createEvent.executeUpdate(sql);
+
+			conn.close();
+			createEvent.close();
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			resp.getWriter().write(e.getMessage());
+		}
+	}
 }
