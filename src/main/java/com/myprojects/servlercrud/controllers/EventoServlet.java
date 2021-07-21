@@ -68,4 +68,28 @@ public class EventoServlet extends HttpServlet {
 			resp.getWriter().write(e.getMessage());
 		}
 	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		try {
+			Class.forName("org.postgresql.Driver");
+			String url = "jdbc:postgresql://localhost/servletjdbc?user=postgres&password=123456&ssl=false";
+			Connection conn = DriverManager.getConnection(url);			
+			Statement createEvent = conn.createStatement();
+			
+			String id = req.getParameter("id");
+
+			String sql = String.format("DELETE FROM evento WHERE eventoid = %s", id);
+			System.out.println(sql);
+
+			createEvent.executeUpdate(sql);
+
+			conn.close();
+			createEvent.close();
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			resp.getWriter().write(e.getMessage());
+		}
+	}
 }
