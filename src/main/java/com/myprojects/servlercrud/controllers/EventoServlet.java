@@ -25,7 +25,15 @@ public class EventoServlet extends HttpServlet {
 			Connection conn = DriverManager.getConnection(url);
 
 			Statement listarEventos = conn.createStatement();
-			ResultSet result = listarEventos.executeQuery("SELECT * from evento ORDER BY eventoID");
+			String idp = req.getParameter("id");
+			String sql;
+			if(idp != null) {
+				sql = "SELECT * from evento WHERE eventoId = " + idp;
+			}else {
+				sql = "SELECT * from evento ORDER BY eventoID";				
+			}
+				
+			ResultSet result = listarEventos.executeQuery(sql);
 
 			while (result.next()) {
 				long id = result.getLong("eventoid");
